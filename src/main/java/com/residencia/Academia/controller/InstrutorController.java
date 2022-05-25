@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.residencia.Academia.dto.InstrutorDTO;
 import com.residencia.Academia.entity.Instrutor;
+import com.residencia.Academia.exception.NoSuchElementFoundException;
 import com.residencia.Academia.service.InstrutorService;
 
 @RestController
@@ -28,12 +30,20 @@ public class InstrutorController {
 		List<Instrutor> instrutorList = instrutorService.findAllInstrutor();
 		return new ResponseEntity<>(instrutorList, HttpStatus.OK);
 	}
+	
+	@GetMapping("/dto/{id}")
+	public ResponseEntity<InstrutorDTO> findInstrutorDTOById(@PathVariable Integer id) {
+		if (null == instrutorService.findInstrutorDTOById(id).getIdInstrutor())
+			throw new NoSuchElementFoundException("Não foi encontrado Instrutor com o id " + id);
+		else
+			return new ResponseEntity<>(instrutorService.findInstrutorDTOById(id), HttpStatus.OK);
+	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Instrutor> findInstrutorById(@PathVariable Integer id) {
 		Instrutor instrutor = instrutorService.findInstrutorById(id);
 		if (null == instrutor)
-			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+			throw new NoSuchElementFoundException("Não foi encontrado Instrutor com o id " + id);
 		else
 			return new ResponseEntity<>(instrutor, HttpStatus.OK);
 	}
@@ -43,15 +53,27 @@ public class InstrutorController {
 		Instrutor novoInstrutor = instrutorService.saveInstrutor(instrutor);
 		return new ResponseEntity<>(novoInstrutor, HttpStatus.CREATED);
 	}
-
+	
+	@PostMapping("/dto")
+	public ResponseEntity<InstrutorDTO> saveInstrutorDTO(@RequestBody InstrutorDTO instrutorDTO) {
+		InstrutorDTO novoInstrutorDTO = instrutorService.saveInstrutorDTO(instrutorDTO);
+		return new ResponseEntity<>(novoInstrutorDTO, HttpStatus.CREATED);
+	}
+	
 	@PutMapping
 	public ResponseEntity<Instrutor> updateInstrutor(@RequestBody Instrutor instrutor) {
-		Instrutor novoInstrutor = instrutorService.updateInstrutor(instrutor);
-		return new ResponseEntity<>(novoInstrutor, HttpStatus.OK);
+		if (instrutorService.findInstrutorById(instrutor.getIdInstrutor()) == null) {
+			throw new NoSuchElementFoundException("Não foi possível atualizar, não foi encontrado o Instrutor com o id " + instrutor.getIdInstrutor());
+		}
+		return new ResponseEntity<>(instrutorService.updateInstrutor(instrutor), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteInstrutor(@PathVariable Integer id) {
+		Instrutor instrutor = instrutorService.findInstrutorById(id);
+		if(null == instrutor)
+			throw new NoSuchElementFoundException("Não foi possível encontrar o Instrutor, pois não foi encontrado um Instrutor com o id " + id);
+		
 		instrutorService.deleteInstrutor(id);
 		return new ResponseEntity<>("", HttpStatus.OK);
 	}
