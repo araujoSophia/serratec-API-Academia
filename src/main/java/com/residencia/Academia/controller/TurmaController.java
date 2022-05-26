@@ -62,8 +62,7 @@ public class TurmaController {
 	
 	@PostMapping("/dto")
 	public ResponseEntity<TurmaDTO> saveTurmaDTO(@RequestBody TurmaDTO turmaDTO) {
-		TurmaDTO novaTurmaDTO = turmaService.saveTurmaDTO(turmaDTO);
-		return new ResponseEntity<>(novaTurmaDTO, HttpStatus.CREATED);
+		return new ResponseEntity<>(turmaService.saveTurmaDTO(turmaDTO), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping("/{id}") 

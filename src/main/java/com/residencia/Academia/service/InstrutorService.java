@@ -20,18 +20,20 @@ public class InstrutorService {
 	public List<Instrutor> findAllInstrutor() {
 		return instrutorRepository.findAll();
 	}
-	
+
 	public Instrutor findInstrutorById(Integer id) {
-		/*return instrutorRepository.findById(id).isPresent() ? instrutorRepository.findById(id).get() : null;*/
+		// return instrutorRepository.findById(id).isPresent() ?
+		// instrutorRepository.findById(id).get() : null;/
 		return instrutorRepository.findById(id).isPresent() ? instrutorRepository.findById(id).get() : null;
 	}
-	
+
 	public InstrutorDTO findInstrutorDTOById(Integer id) {
-		Instrutor instrutor = instrutorRepository.findById(id).isPresent() ? instrutorRepository.findById(id).get() : null;
-		
+		Instrutor instrutor = instrutorRepository.findById(id).isPresent() ? instrutorRepository.findById(id).get()
+				: null;
+
 		InstrutorDTO instrutorDTO = new InstrutorDTO();
-		if(null != instrutor) {
-			instrutorDTO = converterEntidadeParaDto(instrutor);	
+		if (null != instrutor) {
+			instrutorDTO = converterEntidadeParaDto(instrutor);
 		}
 		return instrutorDTO;
 	}
@@ -39,11 +41,11 @@ public class InstrutorService {
 	public Instrutor saveInstrutor(Instrutor instrutor) {
 		return instrutorRepository.save(instrutor);
 	}
-	
+
 	public InstrutorDTO saveInstrutorDTO(InstrutorDTO instrutorDTO) {
 		Instrutor instrutor = converterDtoParaEntidade(instrutorDTO);
 		Instrutor novoInstrutor = instrutorRepository.save(instrutor);
-		
+
 		return converterEntidadeParaDto(novoInstrutor);
 	}
 
@@ -55,22 +57,22 @@ public class InstrutorService {
 		Instrutor inst = instrutorRepository.findById(id).get();
 		instrutorRepository.delete(inst);
 	}
-	
+
 	public void deleteInstrutor(Instrutor instrutor) {
 		instrutorRepository.delete(instrutor);
 	}
-	
+
 	private Instrutor converterDtoParaEntidade(InstrutorDTO instrutorDTO) {
 		Instrutor instrutor = new Instrutor();
-		
+
 		instrutor.setDataNascimento(instrutorDTO.getDataNascimento());
 		instrutor.setIdInstrutor(instrutorDTO.getIdInstrutor());
 		instrutor.setNomeInstrutor(instrutorDTO.getNomeInstrutor());
 		instrutor.setRgInstrutor(instrutorDTO.getRgInstrutor());
 		instrutor.setTitulacaoInstrutor(instrutorDTO.getTitulacaoInstrutor());
-		
+
 		Instrutor novoInstrutor = instrutorRepository.save(instrutor);
-		
+
 		return novoInstrutor;
 	}
 
@@ -81,7 +83,7 @@ public class InstrutorService {
 		instrutorDTO.setNomeInstrutor(instrutor.getNomeInstrutor());
 		instrutorDTO.setRgInstrutor(instrutor.getRgInstrutor());
 		instrutorDTO.setTitulacaoInstrutor(instrutor.getTitulacaoInstrutor());
-		
+
 		List<TurmaDTO> listTurmaDTO = new ArrayList<>();
 		if (null != instrutor.getTurmaList()) {
 			for (Turma turma : instrutor.getTurmaList()) {
@@ -90,12 +92,11 @@ public class InstrutorService {
 				turmaDTO.setDataInicio(turma.getDataInicio());
 				turmaDTO.setHorarioTurma(turma.getHorarioTurma());
 				turmaDTO.setIdTurma(turma.getIdTurma());
-				
+
 				listTurmaDTO.add(turmaDTO);
 			}
 			instrutorDTO.setTurmaDTOList(listTurmaDTO);
 		}
 		return instrutorDTO;
 	}
-	
 }
